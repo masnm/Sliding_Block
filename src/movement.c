@@ -25,14 +25,32 @@ bool internal_swap ( block map[16][16], size_t rows, size_t cols, SDL_Point star
 	return false;
 }
 
+SDL_Point point_dir_add ( SDL_Point f, direction s )
+{
+	return (SDL_Point) {
+		.x = f.x + s.x,
+		.y = f.y + s.y
+	};
+}
+
 SDL_Point move_in_direction ( block map[16][16], size_t rows, size_t cols, SDL_Point player_pos, direction dir )
 {
-	SDL_Point tar = {
-		.x = player_pos.x + dir.x,
-		.y = player_pos.y + dir.y
-	};
-	if ( internal_swap ( map, rows, cols, player_pos, tar ) )
-		return tar;
-	else
-		return player_pos;
+	SDL_Point curr = player_pos;
+	SDL_Point next = point_dir_add ( curr, dir );
+	SDL_Point s_next = point_dir_add ( next, dir );
+	if ( point_inside_map ( rows, cols, curr )
+			&& point_inside_map ( rows, cols, next )
+			&& map[next.x][next.y].fun == NULL ) {
+		internal_swap ( map, rows, cols, curr, next );
+		return next;
+	}
+	if ( point_inside_map ( rows, cols, curr )
+			&& point_inside_map ( rows, cols, next )
+			&& point_inside_map ( rows, cols, s_next )
+			&& map[s_next.x][s_next.y].fun == NULL ) {
+		internal_swap ( map, rows, cols, next, s_next );
+		internal_swap ( map, rows, cols, curr, next );
+		return next;
+	}
+	return player_pos;
 }

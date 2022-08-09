@@ -8,6 +8,7 @@
 #include "../include/mysdl.h"
 #include "../include/block.h"
 #include "../include/movement.h"
+#include "../include/cvector.h"
 
 #define map_rows 16
 #define map_cols 16
